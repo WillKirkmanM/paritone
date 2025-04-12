@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paritone Showcase</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #gui {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 320px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        #stats {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            max-width: 320px;
+            font-family: monospace;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        button, select {
+            margin-top: 8px;
+            padding: 8px 12px;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+            cursor: pointer;
+        }
+        button:hover {
+            background: linear-gradient(to bottom, #f0f0f0, #e6e6e6);
+        }
+        #scenarioDescription {
+            margin: 10px 0;
+            font-size: 14px;
+            font-style: italic;
+            line-height: 1.4;
+        }
+        #pathInfo {
+            margin: 10px 0;
+            font-weight: bold;
+            padding: 8px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            border-left: 4px solid #4caf50;
+        }
+        .stat-section {
+            margin-bottom: 12px;
+        }
+        .stat-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #8bc34a;
+        }
+        .stat-value {
+            margin-left: 10px;
+            margin-bottom: 2px;
+        }
+        .options-panel {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .checkbox-container input {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="gui">
+            <h2>Paritone Controls</h2>
+            <select id="scenarioSelector"></select>
+            <div id="scenarioDescription"></div>
+            <button id="startPathfinding">Find Path</button>
+            <div id="pathInfo" style="display: none;"></div>
+            <button id="resetWorld">Reset Current World</button>
+            
+            <div class="options-panel">
+                <div class="option-container">
+                    <label for="algorithm">Pathfinding Algorithm:</label>
+                    <select id="algorithm">
+                        <option value="astar">A* (efficient with heuristic)</option>
+                        <option value="dijkstra">Dijkstra (optimal, no heuristic)</option>
+                        <option value="bfs">BFS (simple, uniform cost)</option>
+                        <option value="greedy">Greedy Best-First (fastest, suboptimal)</option>
+                        <option value="jps">Jump Point Search (optimised A*)</option>
+                        <option value="ida">IDA* (memory-efficient A*)</option>
+                        <option value="bellmanford">Bellman-Ford (handles negative costs)</option>
+                    </select>
+                </div>
+
+                <div id="advancedOptions" style="margin-top: 10px; display: none; padding: 10px; background-color: #f0f0f0; border-radius: 5px;">
+                    <h4 style="margin-top: 0; margin-bottom: 10px;">Advanced Algorithm Options</h4>
+                    <div class="option-container">
+                        <label for="heuristicType">Heuristic:</label>
+                        <select id="heuristicType">
+                            <option value="manhattan">Manhattan Distance</option>
+                            <option value="euclidean">Euclidean Distance</option>
+                            <option value="chebyshev">Chebyshev Distance</option>
+                        </select>
+                    </div>
+                    <div class="option-container" id="weightContainer">
+                        <label for="heuristicWeight">Weight:</label>
+                        <input type="range" id="heuristicWeight" min="0.5" max="5" step="0.1" value="1.0" style="width: 120px;">
+                        <span id="heuristicWeightValue">1.0</span>
+                    </div>
+                    <div class="option-container" id="iterationsContainer">
+                        <label for="maxIterations">Max Iterations:</label>
+                        <input type="number" id="maxIterations" min="100" max="10000" step="100" value="1000" style="width: 80px;">
+                    </div>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="allowBreaking" checked>
+                    <label for="allowBreaking">Allow Breaking Blocks</label>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="allowPlacing">
+                    <label for="allowPlacing">Allow Placing Blocks</label>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="avoidWater" checked>
+                    <label for="avoidWater">Avoid Water When Possible</label>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="minimiseVertical" checked>
+                    <label for="minimiseVertical">Minimise Vertical Movement</label>
+                </div>
+            </div>
+
+            <div id="algorithmInfo" style="margin-top: 15px; display: none; background-color: #e3f2fd; padding: 10px; border-radius: 5px;">
+                <h4 style="margin-top: 0;">Algorithm Information</h4>
+                <div id="algorithmDescription"></div>
+                <table style="width: 100%; margin-top: 10px;">
+                    <tr>
+                        <td>Time Complexity:</td>
+                        <td id="timeComplexity"></td>
+                    </tr>
+                    <tr>
+                        <td>Space Complexity:</td>
+                        <td id="spaceComplexity"></td>
+                    </tr>
+                    <tr>
+                        <td>Optimality:</td>
+                        <td id="optimality"></td>
+                    </tr>
+                    <tr>
+                        <td>Best Use Cases:</td>
+                        <td id="useCases"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div id="stats" style="display: none;">
+            <h2>Pathfinding Stats</h2>
+            <div class="stat-section">
+                <div class="stat-title">Path Details:</div>
+                <div class="stat-value" id="stat-path-length">Length: --</div>
+                <div class="stat-value" id="stat-computation-time">Computation time: --</div>
+                <div class="stat-value" id="stat-nodes-explored">Nodes explored: --</div>
+            </div>
+            
+            <div class="stat-section">
+                <div class="stat-title">Terrain Navigation:</div>
+                <div class="stat-value" id="stat-blocks-traveled">Blocks traveled: --</div>
+                <div class="stat-value" id="stat-blocks-broken">Blocks broken: --</div>
+                <div class="stat-value" id="stat-blocks-placed">Blocks placed: --</div>
+                <div class="stat-value" id="stat-water-crossed">Water blocks crossed: --</div>
+                <div class="stat-value" id="stat-vertical-distance">Vertical distance: --</div>
+            </div>
+            
+            <div class="stat-section">
+                <div class="stat-title">Estimated Cost:</div>
+                <div class="stat-value" id="stat-time-estimate">Time estimate: --</div>
+                <div class="stat-value" id="stat-total-cost">Total cost: --</div>
+            </div>
+
+            <div class="stat-section">
+                <div class="stat-title">Pathfinding Config:</div>
+                <div class="stat-value" id="stat-algorithm">Algorithm: --</div>
+                <div class="stat-value" id="stat-options">Options: --</div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="index.js"></script>
+</body>
+</html>
+``` 
