@@ -9,10 +9,13 @@
   <a href="https://github.com/WillKirkmanM/paritone/releases">Releases</a> •
   <a href="#features">Features</a> •
   <a href="#algorithms">Algorithms</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#usage">Usage</a>
+  <a href="#installation">Installation</a>
 </h4>
 
+<img width="1280" alt="A*" src="https://github.com/user-attachments/assets/4d70c1f0-6c42-4119-b721-f4165c394240" />
+<img width="1280" alt="IDA*" src="https://github.com/user-attachments/assets/a4ba7f91-6e2b-479c-a847-50a61608e9fb" />
+<img width="1280" alt="Jump Point Search" src="https://github.com/user-attachments/assets/d4a32897-dfd2-41ce-b8e3-ad0ad50c584d" />
+<img width="1280" alt="Dijkstra" src="https://github.com/user-attachments/assets/b0e9eed6-536e-41be-bdd7-053b8e81bb0f" />
 
 ## Features
 
